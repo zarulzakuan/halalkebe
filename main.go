@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -72,5 +73,14 @@ func main() {
 	//router.HandleFunc("/entry/{id}", updateEntry).Methods("PUT")
 	//router.HandleFunc("/entry/{id}", deleteEntry).Methods("DELETE")
 	log.Println("Starting...")
-	http.ListenAndServe(":8000", router)
+
+	// Where ORIGIN_ALLOWED is like `scheme://dns[:port]`, or `*` (insecure)
+	// headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	// methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+	// start server listen
+	// with error handling
+	log.Fatal(http.ListenAndServe(":8000", handlers.CORS(originsOk)(router)))
+	//http.ListenAndServe(":8000", router)
 }
